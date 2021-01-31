@@ -3,11 +3,12 @@ title: "tagmEM"
 author: "Christopher Foley"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
-  html_document: null
-  rmarkdown::html_vignette: default
-  toc: true
-  toc_depth: 2
+  html_document:
+    toc: true
+    theme: united
+    toc_depth: 2
+    number_sections: no
+    highlight: tango
 vignette: |
   %\VignetteIndexEntry{tagmEM} 
   %\VignetteEncoding{UTF-8}
