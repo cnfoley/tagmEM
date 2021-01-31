@@ -8,7 +8,7 @@ output:
   toc: yes
   toc_depth: 2
 vignette: |
-  %\VignetteIndexEntry{mrclust} 
+  %\VignetteIndexEntry{tagmEM} 
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
 ---
@@ -71,7 +71,6 @@ table(res_tagm$results$best$cluster_class);
 table(res_tagm$results$best$cluster_mean);
 # mclust results
 res_mclust = mclust::Mclust(data);
-res_tagm$bic;
 res_mclust$parameters$mean;
 unique(centres);
 ```
