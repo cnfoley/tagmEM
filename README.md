@@ -1,5 +1,5 @@
 # tagmEM
-Generalised t-augmented Gaussian mixture modelling using expectation maximisation
+R package for performing generalised t-augmented Gaussian mixture modelling using expectation maximisation
 
 ## Functions
 * tagm_em - performs univariate t-augmented Gaussian mixture modelling.
