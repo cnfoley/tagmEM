@@ -3,10 +3,10 @@ title: "tagmEM"
 author: "Christopher Foley"
 date: "`r Sys.Date()`"
 output:
-  html_document: null
   pdf_document: default
+  html_document: null
   rmarkdown::html_vignette: default
-  toc: yes
+  toc: true
   toc_depth: 2
 vignette: |
   %\VignetteIndexEntry{tagmEM} 
@@ -50,7 +50,7 @@ library(tagmEM);
 library(mclust);
 ```
 
-## Example with 10 "junk" outliers and 3 clusters
+## Example with 10 "junk" outlier observations and 3 clusters
 
 ```{r}
 set.seed(314);
@@ -78,11 +78,17 @@ table(cluster_size = cluster_sizes, cluster_centre = round(centres,3));
 rng = range(data);
 sig = sd(data) + sqrt(rng[2]-rng[1]);
 res_tagm = tagmEM(data, junk_mixture = TRUE, df = 4, junk_mean = mean(data), junk_sd = sig);
+#
+# Summarise number of observations in each cluster
 table(res_tagm$results$best$cluster_class);
+#
+# Summarise cluster centres:
 table(res_tagm$results$best$cluster_mean);
-# All obs
+#
+# Assess quality of identified clusters against ground truth using adjusted Rand index
+## All obs
 adjustedRandIndex(x = res_tagm$results$best$cluster, y = truth);
-# Remove junk
+## Remove junk
 jnk_obs = which(res_tagm$results$best$cluster_class=="Junk");
 adjustedRandIndex(x = res_tagm$results$best$cluster[-jnk_obs], y = truth[-jnk_obs]);
 ```
@@ -91,9 +97,14 @@ adjustedRandIndex(x = res_tagm$results$best$cluster[-jnk_obs], y = truth[-jnk_ob
 
 ```{r}
 res_mclust = mclust::Mclust(data);
+#
+# Summarise number of observations in each cluster
 table(res_mclust$classification);
+#
+# Summarise cluster centres:
 mn  = round(res_mclust$parameters$mean,3);
 table(mn[res_mclust$classification]);
+# Assess quality of identified clusters against ground truth using adjusted Rand index
 adjustedRandIndex(x = res_mclust$classification, y = truth);
 ```
 
