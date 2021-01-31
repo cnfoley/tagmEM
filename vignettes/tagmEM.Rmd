@@ -1,16 +1,17 @@
 ---
-title: "tagmEM vignette"
+title: "tagmEM"
 author: "Christopher Foley"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   html_document: null
+  pdf_document: default
+  rmarkdown::html_vignette: default
   toc: yes
   toc_depth: 2
 vignette: |
   %\VignetteIndexEntry{tagmEM} 
-  %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown} 
 ---
 
 ```{r, include = FALSE}
@@ -26,7 +27,7 @@ knitr::opts_chunk$set(
 # Introduction
 
 
-tagmEM is used to investigate the presence of...
+tagmEM is a function which employs generalised t-augmented Gaussian mixture modelling to identify sets of observations which cluster (i.e. have common mean and variance components) using an expectation maximisation algorithm. Currently the software can accommodate univariate data only. In a future release this will be upgraded to allow for multi-variate data to be analysed. Below we give a quick guide to installation and an example of how to use the function - including a comparison with the very popular Gaussian mixture modelling package 'Mclust'.  
 
 
 # Installation
@@ -43,35 +44,56 @@ install_github("cnfoley/tagmEM", build_vignettes = TRUE)
 ```
 
 # Using tagmEM 
+
 ```{r setup}
 library(tagmEM);
 library(mclust);
 ```
 
+## Example with 10 "junk" outliers and 3 clusters
 
 ```{r}
-set.seed(123);
+set.seed(314);
 cluster_sizes = c(rep(1,10),25,35,30);
 N = sum(cluster_sizes);
 K = length(cluster_sizes);
-centres = c(rep(0,10), runif(K-10,-10,10));
+centres = c(runif(10,-1,1), runif(K-10,-10,10));
 std_devs = c(rep(5,10),sqrt(runif(K-1,0.1,1)));
 data = NULL;
+truth = NULL;
 count = 1;
   for(i in cluster_sizes){
       data = c(data, rnorm(i, mean = centres[count], sd = std_devs[count]));
+      truth = c(truth, rep(count,i));
       count = count + 1;
   }
 
-# tagm results
+# cluster centres
+table(cluster_size = cluster_sizes, cluster_centre = round(centres,3));
+```
+
+### tagmEM results
+
+```{r}
 rng = range(data);
 sig = sd(data) + sqrt(rng[2]-rng[1]);
 res_tagm = tagmEM(data, junk_mixture = TRUE, df = 4, junk_mean = mean(data), junk_sd = sig);
 table(res_tagm$results$best$cluster_class);
 table(res_tagm$results$best$cluster_mean);
-# mclust results
+# All obs
+adjustedRandIndex(x = res_tagm$results$best$cluster, y = truth);
+# Remove junk
+jnk_obs = which(res_tagm$results$best$cluster_class=="Junk");
+adjustedRandIndex(x = res_tagm$results$best$cluster[-jnk_obs], y = truth[-jnk_obs]);
+```
+
+### Mclust results
+
+```{r}
 res_mclust = mclust::Mclust(data);
-res_mclust$parameters$mean;
-unique(centres);
+table(res_mclust$classification);
+mn  = round(res_mclust$parameters$mean,3);
+table(mn[res_mclust$classification]);
+adjustedRandIndex(x = res_mclust$classification, y = truth);
 ```
 
