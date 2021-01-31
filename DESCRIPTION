@@ -1,0 +1,17 @@
+Package: tagmEM
+Title:  Generalised t-augmented Gaussian mixture modelling using expectation maximisation
+Version: 1.0
+Date: 31-01-2021
+Author: Christopher N Foley
+Maintainer: Christopher N Foley <chris.neal.foley@gmail.com>
+Description: This package uses expectation-maximisation and a Generalised t-augmented Gaussian mixture model to assess evidence of clustered substructure in the data.
+Depends: R (>= 3.5.0), methods
+License: GPL (>= 2)
+ByteCompile: TRUE
+LazyData: TRUE
+Encoding: UTF-8
+Imports: dplyr, reshape2, matrixStats, data.table, knitr, rmarkdown
+Suggests: 
+    mclust
+VignetteBuilder: knitr
+RoxygenNote: 7.1.1

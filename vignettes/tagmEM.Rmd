@@ -1,0 +1,78 @@
+---
+title: "tagmEM vignette"
+author: "Christopher Foley"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: null
+  toc: yes
+  toc_depth: 2
+vignette: |
+  %\VignetteIndexEntry{mrclust} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 5, 
+  fig.height = 4
+)
+```
+
+
+# Introduction
+
+
+tagmEM is used to investigate the presence of...
+
+
+# Installation
+
+
+```{r, echo=F}
+options(warn = -1)
+```
+
+```{r, eval=F}
+install.packages("devtools", repos='http://cran.us.r-project.org')
+library(devtools)
+install_github("cnfoley/tagmEM", build_vignettes = TRUE)
+```
+
+# Using tagmEM 
+```{r setup}
+library(tagmEM);
+library(mclust);
+```
+
+
+```{r}
+set.seed(123);
+cluster_sizes = c(rep(1,10),25,35,30);
+N = sum(cluster_sizes);
+K = length(cluster_sizes);
+centres = c(rep(0,10), runif(K-10,-10,10));
+std_devs = c(rep(5,10),sqrt(runif(K-1,0.1,1)));
+data = NULL;
+count = 1;
+  for(i in cluster_sizes){
+      data = c(data, rnorm(i, mean = centres[count], sd = std_devs[count]));
+      count = count + 1;
+  }
+
+# tagm results
+rng = range(data);
+sig = sd(data) + sqrt(rng[2]-rng[1]);
+res_tagm = tagmEM(data, junk_mixture = TRUE, df = 4, junk_mean = mean(data), junk_sd = sig);
+table(res_tagm$results$best$cluster_class);
+table(res_tagm$results$best$cluster_mean);
+# mclust results
+res_mclust = mclust::Mclust(data);
+res_tagm$bic;
+res_mclust$parameters$mean;
+unique(centres);
+```
+
